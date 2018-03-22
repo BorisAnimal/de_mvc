@@ -1,8 +1,8 @@
-def improved_euler(f, y0, x0, X, steps):
+def improved_euler(x0, X, steps, f=None, y0=None):
     return __basic(f, y0, x0, X, steps, __imp_eul_lambda)
 
 
-def euler(f, y0, x0, X, steps):
+def euler(x0, X, steps, f=None, y0=None):
     return __basic(f, y0, x0, X, steps, __eul_lambda)
 
 
@@ -12,10 +12,13 @@ def __basic(f, y0, x0, X, steps, alg):
     y = y0
     h = (X - x0) / float(steps)
     for i in range(steps):
-        y = alg(f, x, y, h)
-        x = x + h
-        values['y'].append(y)
-        values['x'].append(x)
+        try:
+            y = alg(f, x, y, h)
+            x = x + h
+            values['y'].append(y)
+            values['x'].append(x)
+        except ZeroDivisionError:
+            print("Zero division occurred. Function is chunky!")
     return values
 
 
@@ -25,7 +28,6 @@ def __imp_eul_lambda(f, x, y, h):
 
 def __eul_lambda(f, x, y, h):
     return y + f(x, y) * h
-
 
 # # TODO: remove tests
 # if __name__ == "__main__":

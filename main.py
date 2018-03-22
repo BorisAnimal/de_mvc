@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+# TODO: fix chunks in funciton
+
 import random
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
@@ -13,6 +15,7 @@ class MatplotlibWidget(QtGui.QWidget):
     """
     Widget on view with graphics
     """
+
     def __init__(self, parent=None):
         super(MatplotlibWidget, self).__init__(parent)
 
@@ -35,7 +38,7 @@ class ThreadSample(QtCore.QThread):
         super(ThreadSample, self).__init__(parent)
 
     def run(self):
-        #TODO: ask controller for new data
+        # TODO: ask controller for new data
         randomSample = random.sample(range(0, 1000), 100)
 
         self.newSample.emit(randomSample)
@@ -45,6 +48,7 @@ class MyWindow(QtGui.QWidget):
     """
     View enter point (GUI)
     """
+
     def __init__(self, parent=None):
         super(MyWindow, self).__init__(parent)
 
