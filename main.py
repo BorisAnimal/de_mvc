@@ -3,49 +3,12 @@
 
 # TODO: fix chunks in funciton
 
-import random
-import sys
-
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
-from matplotlib.figure import Figure
+import pyqtgraph as pg
 
 from filter import Selector
 from controller import *
 
 from PyQt4 import QtGui, QtCore
-
-
-class MatplotlibWidget(QtGui.QWidget):
-    """
-    Widget on view with graphics
-    """
-
-    def __init__(self, parent=None):
-        super(MatplotlibWidget, self).__init__(parent)
-
-        self.figure = Figure()
-        self.canvas = FigureCanvasQTAgg(self.figure)
-
-        self.axis = self.figure.add_subplot(111)
-
-        self.layoutVertical = QtGui.QVBoxLayout(self)
-        self.layoutVertical.addWidget(self.canvas)
-
-
-class ThreadSample(QtCore.QThread):
-    """
-    Class that provides data to graph (@MatplotlibWidget)
-    """
-    newSample = QtCore.pyqtSignal(list)
-
-    def __init__(self, parent=None):
-        super(ThreadSample, self).__init__(parent)
-
-    def run(self):
-        # TODO: ask controller for new data
-        randomSample = random.sample(range(0, 1000), 100)
-
-        self.newSample.emit(randomSample)
 
 
 class MyWindow(QtGui.QWidget):
@@ -58,23 +21,23 @@ class MyWindow(QtGui.QWidget):
 
         self.controller = Controller()
 
-        self.solutionGraphWidget = MatplotlibWidget(self)
-        self.errorGraphWidget = MatplotlibWidget(self)
+        self.solutionGraphWidget = pg.PlotWidget(self, name='Plot1')
+        self.errorGraphWidget = pg.PlotWidget(self, name='Plot2')
 
         # Main layout (horizontal)
         self.hbox = QtGui.QHBoxLayout(self)
-        self.hbox.addStretch(1)
+        # self.hbox.addStretch(1)
         # Left control panel layout (vertical)
         self.control_box = QtGui.QVBoxLayout(self)
-        self.hbox.addLayout(self.control_box)
+        self.hbox.addLayout(self.control_box, 0)
 
         # init views
-        self.x0Edit = QtGui.QLineEdit()
-        self.y0Edit = QtGui.QLineEdit()
-        self.XEdit = QtGui.QLineEdit()
+        self.x0Edit = QtGui.QDoubleSpinBox(minimum=3.0 / 4, maximum=90)
+        self.y0Edit = QtGui.QDoubleSpinBox(minimum=-50, maximum=100)
+        self.XEdit = QtGui.QDoubleSpinBox(minimum=self.x0Edit.minimum() + 0.1)
         self.notificationsEdit = QtGui.QTextEdit()
         self.notificationsEdit.setEnabled(False)
-        self.NEdit = QtGui.QLineEdit()
+        self.NEdit = QtGui.QDoubleSpinBox(minimum=20, maximum=10000)  # TODO: write this in report
         self.exactButton = QtGui.QPushButton("Exact")
         self.eulerButton = QtGui.QPushButton("Euler")
         self.eulerImpButton = QtGui.QPushButton("ImprovedEuler")
@@ -114,19 +77,38 @@ class MyWindow(QtGui.QWidget):
         rgrid.addWidget(self.solutionGraphWidget)
         rgrid.addWidget(self.errorGraphWidget)
         self.hbox.addLayout(rgrid)
+        # add control_box layout
 
         self.exactButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.EXACT))
         self.eulerButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.EULER))
         self.eulerImpButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.IMP_EULER))
         self.rkButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.RUNGE_KUTTA))
+        self.x0Edit.valueChanged.connect(self.on_x0_changed)
+        self.y0Edit.valueChanged.connect(self.on_y0_changed)
+        self.NEdit.valueChanged.connect(self.on_N_changed)
+        self.XEdit.valueChanged.connect(self.on_X_changed)
 
-        self.threadSample = ThreadSample(self)
-        self.threadSample.newSample.connect(self.on_threadSample_newSample)
-        self.threadSample.finished.connect(self.on_threadSample_finished)
         self.update_state()
 
+    def on_x0_changed(self):
+        self.controller.set_x0(self.x0Edit.value())
+        self.log(str(self.controller.filter))
+
+    def on_y0_changed(self):
+        self.controller.set_y0(self.y0Edit.value())
+
+    def on_X_changed(self):
+        self.controller.set_X(self.XEdit.value())
+
+    def on_N_changed(self):
+        self.controller.set_N(self.NEdit.value())
+
+    def log(self, s):
+        self.notificationsEdit.insertPlainText(s)
+        self.notificationsEdit.moveCursor(QtGui.QTextCursor.End)
+
     def update_state(self):
-        self.solutionGraphWidget.axis.clear()
+        pass
 
     @QtCore.pyqtSlot()
     def on_algorithmButton_clicked(self, selector):

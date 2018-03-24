@@ -22,7 +22,7 @@ class Filter:
         self.x0 = 3 / 4.0
         self.y0 = 3.0
         self.X = 5.5
-        self.steps = 100
+        self.N = 100
         self.selected_method = Selector.EULER
 
         # Implementated
@@ -32,10 +32,13 @@ class Filter:
                         Selector.EXACT: exactGraph}
 
     def get_data(self):
-        return self.methods[self.selected_method](x0=self.x0, X=self.X, steps=self.steps, f=derivative, y0=self.y0)
+        return self.methods[self.selected_method](x0=self.x0, X=self.X, steps=self.N, f=derivative, y0=self.y0)
 
     def get_error(self):
         pass
+
+    def __str__(self):
+        return "x0: {}\ny0: {}\nX: {}\nN: {}\nMethod: {}".format(str(self.x0), str(self.y0), str(self.X), str(self.N), self.selected_method )
 
 
 
