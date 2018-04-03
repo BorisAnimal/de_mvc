@@ -1,3 +1,5 @@
+import numpy as np
+
 def improved_euler(x0, X, steps, f=None, y0=None):
     return __basic(f, y0, x0, X, steps, __imp_eul_lambda)
 
@@ -11,6 +13,7 @@ def __basic(f, y0, x0, X, steps, alg):
     x = x0
     y = y0
     h = (X - x0) / float(steps)
+
     for i in range(steps):
         try:
             y = alg(f, x, y, h)

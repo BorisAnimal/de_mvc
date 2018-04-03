@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-# TODO: fix chunks in funciton
-
 import pyqtgraph as pg
 
 from filter import Selector
@@ -101,7 +99,7 @@ class MyWindow(QtGui.QWidget):
         self.controller.set_X(self.XEdit.value())
 
     def on_N_changed(self):
-        self.controller.set_N(self.NEdit.value())
+        self.controller.set_N(int(self.NEdit.value()))
 
     def log(self, s):
         self.notificationsEdit.insertPlainText(s)
@@ -113,17 +111,8 @@ class MyWindow(QtGui.QWidget):
     @QtCore.pyqtSlot()
     def on_algorithmButton_clicked(self, selector):
         self.controller.filter.selected_method = selector
-        self.solutionGraphWidget.axis.clear()
-        self.threadSample.start()
-
-    @QtCore.pyqtSlot(list)
-    def on_threadSample_newSample(self, sample):
-        self.solutionGraphWidget.axis.plot(sample)
-        self.solutionGraphWidget.canvas.draw()
-
-    @QtCore.pyqtSlot()
-    def on_threadSample_finished(self):
-        self.threadSample.start()
+        res = self.controller.filter.get_data()
+        self.solutionGraphWidget.plot(res['x'], res['y'])
 
 
 if __name__ == "__main__":
