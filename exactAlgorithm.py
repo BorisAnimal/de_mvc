@@ -7,20 +7,19 @@ import matplotlib.pyplot as plt
 
 def __exactY(X, c):
     x = float(X)
-    return 3 * c * pow(e, 3 * x * x / 2) / (1 - c * pow(e, 3 * x * x / 2))
+    return c * pow(e, 1.5 * x * x) / (1 - c * pow(e, 1.5 * x * x))
 
 
 def exactGraph(x0, X, steps, f=None, y0=None):
     x = x0
-    c = y0 / (y0 + 3) * pow(e, 3 * x0 * x0 / 2)
-    y = __exactY(x0, c)
-    values = {'x': [x0], 'y': [y]}
+    c = y0 / (pow(e, 1.5 * x0 * x0) * (1 + y0))
+    values = {'x': [], 'y': []}
     h = (X - x0) / float(steps)
     for i in range(steps):
         # Handle 0 devision
         try:
             y = __exactY(x, c)
-            x = x + h
+            x += h
             values['y'].append(y)
             values['x'].append(x)
         except ZeroDivisionError:
@@ -30,10 +29,10 @@ def exactGraph(x0, X, steps, f=None, y0=None):
 
 # TODO: remove tests
 if __name__ == "__main__":
-    print("Euler's algorithm testing executing...")
+    print("Exact algorithm testing executing...")
 
-    d = exactGraph(0.0, 5.5, 200, y0=3)
-    print(len(d['x']), d['x'])
-    print(len(d['y']), d['y'])
+    d = exactGraph(-5.0, 15.0, 1000, y0=0.05)
+    # print(len(d['x']), d['x'])
+    # print(len(d['y']), d['y'])
     plt.plot(d['x'], d['y'])
     plt.show()

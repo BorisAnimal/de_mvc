@@ -32,10 +32,10 @@ class MyWindow(QtGui.QWidget):
         # init views
         self.x0Edit = QtGui.QDoubleSpinBox(minimum=3.0 / 4, maximum=90)
         self.y0Edit = QtGui.QDoubleSpinBox(minimum=-50, maximum=100)
-        self.XEdit = QtGui.QDoubleSpinBox(minimum=self.x0Edit.minimum() + 0.1)
+        self.XEdit = QtGui.QDoubleSpinBox(minimum=5.0)
         self.notificationsEdit = QtGui.QTextEdit()
         self.notificationsEdit.setEnabled(False)
-        self.NEdit = QtGui.QDoubleSpinBox(minimum=20, maximum=10000)  # TODO: write this in report
+        self.NEdit = QtGui.QDoubleSpinBox(minimum=100, maximum=10000)  # TODO: write this in report
         self.exactButton = QtGui.QPushButton("Exact")
         self.eulerButton = QtGui.QPushButton("Euler")
         self.eulerImpButton = QtGui.QPushButton("ImprovedEuler")
@@ -81,37 +81,30 @@ class MyWindow(QtGui.QWidget):
         self.eulerButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.EULER))
         self.eulerImpButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.IMP_EULER))
         self.rkButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.RUNGE_KUTTA))
-        self.x0Edit.valueChanged.connect(self.on_x0_changed)
-        self.y0Edit.valueChanged.connect(self.on_y0_changed)
-        self.NEdit.valueChanged.connect(self.on_N_changed)
-        self.XEdit.valueChanged.connect(self.on_X_changed)
+        self.x0Edit.valueChanged.connect(self.update_state)
+        self.y0Edit.valueChanged.connect(self.update_state)
+        self.NEdit.valueChanged.connect(self.update_state)
+        self.XEdit.valueChanged.connect(self.update_state)
 
         self.update_state()
-
-    def on_x0_changed(self):
-        self.controller.set_x0(self.x0Edit.value())
-        self.log(str(self.controller.filter))
-
-    def on_y0_changed(self):
-        self.controller.set_y0(self.y0Edit.value())
-
-    def on_X_changed(self):
-        self.controller.set_X(self.XEdit.value())
-
-    def on_N_changed(self):
-        self.controller.set_N(int(self.NEdit.value()))
 
     def log(self, s):
         self.notificationsEdit.insertPlainText(s)
         self.notificationsEdit.moveCursor(QtGui.QTextCursor.End)
 
     def update_state(self):
-        pass
+        self.controller.set_x0(self.x0Edit.value())
+        self.controller.set_y0(self.y0Edit.value())
+        self.controller.set_X(self.XEdit.value())
+        self.controller.set_N(int(self.NEdit.value()))
 
     @QtCore.pyqtSlot()
     def on_algorithmButton_clicked(self, selector):
         self.controller.filter.selected_method = selector
+        self.solutionGraphWidget.clear()
+
         res = self.controller.filter.get_data()
+        print(res)
         self.solutionGraphWidget.plot(res['x'], res['y'])
 
 

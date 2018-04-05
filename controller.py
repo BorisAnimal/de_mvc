@@ -16,4 +16,4 @@ class Controller():
         self.filter.X = X
 
     def set_N(self, N):
-        self.filter.N = N
+        self.filter.N = int(N)
