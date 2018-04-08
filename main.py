@@ -29,13 +29,15 @@ class MyWindow(QtGui.QWidget):
         self.control_box = QtGui.QVBoxLayout(self)
         self.hbox.addLayout(self.control_box, 0)
 
+
+        #(-1.5, 8.5, 10000, y0=-2.0)
         # init views
-        self.x0Edit = QtGui.QDoubleSpinBox(minimum=3.0 / 4, maximum=90)
-        self.y0Edit = QtGui.QDoubleSpinBox(minimum=-50, maximum=100)
-        self.XEdit = QtGui.QDoubleSpinBox(minimum=5.0)
+        self.x0Edit = QtGui.QDoubleSpinBox(minimum=-8.5, maximum=8.5, value=-1.5)
+        self.y0Edit = QtGui.QDoubleSpinBox(minimum=-2.99, maximum=0.0, value=-2.0)
+        self.XEdit = QtGui.QDoubleSpinBox(minimum=-8.5, value=8.5)
         self.notificationsEdit = QtGui.QTextEdit()
         self.notificationsEdit.setEnabled(False)
-        self.NEdit = QtGui.QDoubleSpinBox(minimum=100, maximum=10000)  # TODO: write this in report
+        self.NEdit = QtGui.QSpinBox(minimum=10, maximum=10000, value=100)  # TODO: write this in report
         self.exactButton = QtGui.QPushButton("Exact")
         self.eulerButton = QtGui.QPushButton("Euler")
         self.eulerImpButton = QtGui.QPushButton("ImprovedEuler")
@@ -102,7 +104,7 @@ class MyWindow(QtGui.QWidget):
     def on_algorithmButton_clicked(self, selector):
         self.controller.filter.selected_method = selector
         self.solutionGraphWidget.clear()
-
+        self.update_state()
         res = self.controller.filter.get_data()
         print(res)
         self.solutionGraphWidget.plot(res['x'], res['y'])

@@ -7,12 +7,13 @@ import matplotlib.pyplot as plt
 
 def __exactY(X, c):
     x = float(X)
-    return c * pow(e, 1.5 * x * x) / (1 - c * pow(e, 1.5 * x * x))
+    tmp = pow(e, 1.5 * x * x)
+    return  3*c * tmp / (1 - c * tmp)
 
 
 def exactGraph(x0, X, steps, f=None, y0=None):
     x = x0
-    c = y0 / (pow(e, 1.5 * x0 * x0) * (1 + y0))
+    c = y0 / (pow(e, 1.5 * x0 * x0) * (3 + y0))
     values = {'x': [], 'y': []}
     h = (X - x0) / float(steps)
     for i in range(steps):
@@ -31,7 +32,7 @@ def exactGraph(x0, X, steps, f=None, y0=None):
 if __name__ == "__main__":
     print("Exact algorithm testing executing...")
 
-    d = exactGraph(-5.0, 15.0, 1000, y0=0.05)
+    d = exactGraph(-1.5, 8.5, 10000, y0=-2.0)
     # print(len(d['x']), d['x'])
     # print(len(d['y']), d['y'])
     plt.plot(d['x'], d['y'])

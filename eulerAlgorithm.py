@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     # 0.50, 8.0, 1000, y0=-0.5
     d = euler(0.5, 8.0, 1000, func, -0.5)
-    print(d['y'])
+    print(len(d['y']))
     plt.plot(d['x'], d['y'])
     plt.ylabel('some numbers')
     plt.show()
