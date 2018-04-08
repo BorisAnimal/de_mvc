@@ -15,9 +15,9 @@ def __basic(f, y0, x0, X, steps, alg):
     h = (X - x0) / float(steps)
 
     x = np.linspace(x0, X, steps)
-    values = {'x': x, 'y': []}
+    values = {'x': x, 'y': [y0]}
 
-    for i in x:
+    for i in x[1:]:
         try:
             y = alg(f, i, y, h)
             values['y'].append(y)
@@ -31,6 +31,7 @@ def __imp_eul_lambda(f, x, y, h):
 
 
 def __eul_lambda(f, x, y, h):
+    # print("f: {}\t\tx: {}\t\ty: {}\t\th: {}".format(f(x, y), x, y, h))
     # print(str(f(x, y)), x, y)
     return y + f(x, y) * h
 
@@ -43,9 +44,10 @@ if __name__ == "__main__":
     def func(x, y):
         return y * (float(x) * y + 3.0 * x)
 
+
     # 0.50, 8.0, 1000, y0=-0.5
-    d = euler(0.5, 8.0, 1000, func, -0.5)
-    print(len(d['y']))
-    plt.plot(d['x'], d['y'])
-    plt.ylabel('some numbers')
-    plt.show()
+    d = euler(-4.5, 6.0, 100, func, -2.0)
+    print(d['y'])
+    # plt.plot(d['x'], d['y'])
+    # plt.ylabel('some numbers')
+    # plt.show()
