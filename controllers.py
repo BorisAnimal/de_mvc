@@ -87,7 +87,7 @@ class ControllerStepError:
     # Keeps state and input information of system
     def __init__(self, view, tmp=None):
         self.view = view
-        self.n0 = 95
+        self.n0 = 40
         self.N = 100
         # Hello, Controller from the other side
         self.x0 = tmp.x0
@@ -125,9 +125,10 @@ class ControllerStepError:
         res = self.get_data()
         self.view.clear_graphs()
         for i, values in enumerate(res):
-            sel = self.selected_methods[i]
-            x = list(range(self.n0, self.N))
-            self.view.plot_stepError(x, values, self.ALG_CLR[sel], sel.name)
+            if i < len(self.selected_methods):
+                sel = self.selected_methods[i]
+                x = list(range(self.n0, self.N))
+                self.view.plot_stepError(x, values, self.ALG_CLR[sel], sel.name)
 
 
 if __name__ == "__main__":
