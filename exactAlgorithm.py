@@ -30,7 +30,7 @@ def exactGraph(x0, X, steps, f=None, y0=None):
     return values
 
 
-def errorGraph(values):
+def errorGraph(values, prepared_exacts=None):
     """
     :param values: dictionary where 'x' and 'y' arrays stored
     :return: dictionary with local error values and x values
@@ -42,7 +42,12 @@ def errorGraph(values):
     steps = len(x)
     y0 = y[0]
     errors = []
-    exacts = exactGraph(x0, X, steps, y0=y0)['y']
+    # exacts = []
+    # if prepared_exacts == None:
+    #     exacts = exactGraph(x0, X, steps, y0=y0)['y']
+    # else:
+    #     exacts = prepared_exacts['y']
+    exacts = exactGraph(x0, X, steps, y0=y0)['y'] if prepared_exacts == None else prepared_exacts['y']
     for i, ex in enumerate(exacts):
         errors.append(abs(ex - y[i]))
     return {'x': x, 'y': errors}

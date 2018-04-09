@@ -86,17 +86,55 @@ class ControllerStepError:
     ALG_CLR = {Selector.EULER: 'g', Selector.IMP_EULER: 'r', Selector.RUNGE_KUTTA: 'b', Selector.EXACT: 'w'}
 
     # Keeps state and input information of system
-    def __init__(self, view):
+    def __init__(self, view, tmp=None):
         self.view = view
-        self.n0 = 40
+        self.n0 = 95
         self.N = 100
+        # Hello, Controller from the other side
+        self.x0 = tmp.x0
+        self.y0 = tmp.y0
+        self.X = tmp.X
+        self.derivative = tmp.derivative
         self.selected_methods = []
+        # Approximation algorithm methods
+        self.methods = {Selector.EULER: euler,
+                        Selector.IMP_EULER: improved_euler,
+                        Selector.RUNGE_KUTTA: rk}
 
     def switch_selector(self, selector):
         if selector not in self.selected_methods:
             self.selected_methods.append(selector)
         else:
             self.selected_methods.remove(selector)
+
+
+    def get_data(self):
+        """
+        :return: list of dictionaries with 'x' and 'y' lists!!!
+        """
+        data = [[]] * len(self.selected_methods)
+
+        for step in range (self.n0, self.N):
+            exacts = exactGraph(x0=self.x0, X=self.X, steps=step, f=self.derivative, y0=self.y0)
+            for i, sel in enumerate(self.selected_methods):
+                tmp = self.methods[sel](x0=self.x0, X=self.X, steps=step, f=self.derivative, y0=self.y0)
+                errors = errorGraph(tmp, exacts)['y']
+                # print(errors)
+                a=max(errors)
+                print(sel.name, a)
+                data[i].append(a)
+                print(data)
+        # print(data)
+        return data
+
+    def update_view(self):
+        res = self.get_data()
+        self.view.clear_graphs()
+        for i, values in enumerate(res):
+            sel = self.selected_methods[i]
+            x = list(range(self.n0, self.N))
+            # print(values)
+            self.view.plot_stepError(x, values, self.ALG_CLR[sel], sel.name)
 
 
 

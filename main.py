@@ -3,18 +3,13 @@
 
 from PyQt5 import QtGui, QtCore
 import pyqtgraph as pg
-from controllermain import *
+from controllers import *
 
 
 class MyWindow(QtGui.QWidget):
     """
     View enter point (GUI)
     """
-
-    # TODO: update button
-    # Not implemented (but tried): replace legend
-    # TODO: max error button
-    # TODO: max error screen
 
     def __init__(self, parent=None):
         super(MyWindow, self).__init__(parent)
@@ -149,9 +144,8 @@ class MyWindow(QtGui.QWidget):
 class Second(QtGui.QDialog):
     def __init__(self, parent=None):
         super(Second, self).__init__(parent)
-        self.controller = ControllerStepError(self)
+        self.controller = ControllerStepError(self, tmp=parent.controller)
         self.init_components()
-
         self.n0Edit.valueChanged.connect(self.update_state)
         self.NEdit.valueChanged.connect(self.update_state)
         self.eulerButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.EULER))
@@ -162,9 +156,26 @@ class Second(QtGui.QDialog):
         self.resize(500, 600)
 
 
+    def clear_graphs(self):
+        try:
+            self.stepErrorGraphWidget.clear()
+            self.stepErrorGraphWidget.getViewBox().removeItem(self.stepErrorGraphWidget.plotItem.legend)
+            self.stepErrorGraphWidget.addLegend()
+        except:
+            self.log("Exception accured (2)!!!\n")
+
+
+    def plot_stepError(self, x, y, clr, legend):
+        # print(x)
+        # print(y)
+        print(len(x))
+        print(len(y))
+        self.stepErrorGraphWidget.plot(x, y, pen=clr, name=legend)
+
     @QtCore.pyqtSlot()
     def on_updateButton_clicked(self):
         print("update (redraw)")
+        self.controller.update_view()
 
 
     @QtCore.pyqtSlot()
@@ -210,8 +221,6 @@ class Second(QtGui.QDialog):
         grid.addWidget(self.updateButton, 6, 0, 1, 2)
         self.vbox.addLayout(grid)
 
-
-        
 
 if __name__ == "__main__":
     import sys
