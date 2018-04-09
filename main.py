@@ -52,19 +52,21 @@ class MyWindow(QtGui.QWidget):
         grid = QtGui.QGridLayout()
         grid.setSpacing(20)
 
-        grid.addWidget(QtGui.QLabel('Initial'), 0, 0)
-        grid.addWidget(QtGui.QLabel('Conditions'), 0, 1)
+        grid.addWidget(QtGui.QLabel('Initial Conditions', alignment=QtCore.Qt.AlignCenter, font=QtGui.QFont("Roboto", 12)), 0, 0, 1, 2)
+        # grid.addWidget(QtGui.QLabel('Conditions'), 0, 1)
 
-        grid.addWidget(QtGui.QLabel('x0'), 2, 0)
+        font = QtGui.QFont("Roboto", 10)
+
+        grid.addWidget(QtGui.QLabel('x0', alignment=QtCore.Qt.AlignCenter, font=font), 2, 0)
         grid.addWidget(self.x0Edit, 2, 1)
 
-        grid.addWidget(QtGui.QLabel('y0'), 3, 0)
+        grid.addWidget(QtGui.QLabel('y0', alignment=QtCore.Qt.AlignCenter, font=font), 3, 0)
         grid.addWidget(self.y0Edit, 3, 1)
 
-        grid.addWidget(QtGui.QLabel('X'), 4, 0)
+        grid.addWidget(QtGui.QLabel('X', alignment=QtCore.Qt.AlignCenter, font=font), 4, 0)
         grid.addWidget(self.XEdit, 4, 1)
 
-        grid.addWidget(QtGui.QLabel('N'), 5, 0)
+        grid.addWidget(QtGui.QLabel('N', alignment=QtCore.Qt.AlignCenter, font=font), 5, 0)
         grid.addWidget(self.NEdit, 5, 1)
 
         grid.addWidget(self.exactButton, 6, 0, 1, 2)  # int fromRow, int fromColumn, int rowSpan, int columnSpan
