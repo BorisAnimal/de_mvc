@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from PyQt5 import QtGui, QtCore
 import pyqtgraph as pg
 from controllermain import *
-from PyQt4 import QtGui, QtCore
 
 
 class MyWindow(QtGui.QWidget):
@@ -40,9 +40,9 @@ class MyWindow(QtGui.QWidget):
 
     def changeState(self):
         print("change")
-        print(dir(self.control_box))
         self.dialog = Second(self)
-        self.dialog.show()
+        # self.dialog.show()
+        self.dialog.exec_()
 
     def init_graphs(self):
         # init graph's layout
@@ -103,7 +103,7 @@ class MyWindow(QtGui.QWidget):
         self.exactButton = QtGui.QCheckBox("Exact")
         self.eulerButton = QtGui.QCheckBox("Euler")
         self.eulerImpButton = QtGui.QCheckBox("ImprovedEuler")
-        self.rkButton = QtGui.QCheckBox("Runge Kutta")
+        self.rkButton = QtGui.QCheckBox("Runge-Kutta")
         self.changeStateButton = QtGui.QPushButton("Max Error>>")
 
     def log(self, s):
@@ -146,12 +146,47 @@ class MyWindow(QtGui.QWidget):
             self.log("Exception accured (2)!!!\n")
 
 
-class Second(QtGui.QMainWindow):
+class Second(QtGui.QDialog):
     def __init__(self, parent=None):
         super(Second, self).__init__(parent)
-        self.stepErrorGraphWidget = pg.PlotWidget(self, name='Step<->Error')
-        self.resize(800, 600)
+        self.controller = ControllerStepError(self)
 
+        self.init_components()
+
+        self.resize(500, 600)
+    
+    def init_components(self):
+        # Main layout (vertical)
+        self.vbox = QtGui.QVBoxLayout(self)
+
+        self.stepErrorGraphWidget = pg.PlotWidget(self, name='Step<->Error')
+        self.vbox.addWidget(self.stepErrorGraphWidget)
+
+        grid = QtGui.QGridLayout()
+        grid.setSpacing(20)
+
+        grid.addWidget(QtGui.QLabel('Parameters'), 0, 0, 1, 2)
+
+        grid.addWidget(QtGui.QLabel('n0'), 1, 0)
+        self.n0Edit = QtGui.QSpinBox(minimum=40, maximum=960, value=40)
+        grid.addWidget(self.n0Edit, 1, 1)
+
+        grid.addWidget(QtGui.QLabel('N'), 2, 0)
+        self.NEdit = QtGui.QSpinBox(minimum=100, maximum=1000, value=100)
+        grid.addWidget(self.NEdit, 2, 1)
+
+        self.eulerButton = QtGui.QCheckBox("Euler")
+        self.improvedEulerButton = QtGui.QCheckBox("ImprovedEuler")
+        self.rkButton = QtGui.QCheckBox("Runge-Kutta")
+        grid.addWidget(self.eulerButton, 3, 0, 1, 2) 
+        grid.addWidget(self.improvedEulerButton, 4, 0, 1, 2) 
+        grid.addWidget(self.rkButton, 5, 0, 1, 2) 
+        
+        self.vbox.addLayout(grid)
+        
+        self.updateButton = QtGui.QPushButton("Update")
+        self.vbox.addWidget(self.updateButton)
+        
 
 if __name__ == "__main__":
     import sys
