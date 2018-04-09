@@ -4,7 +4,6 @@ from exactAlgorithm import exactGraph, errorGraph
 from enum import Enum
 
 
-
 class Selector(Enum):
     EULER = 'Euler',
     IMP_EULER = 'Improved_euler',
@@ -24,7 +23,7 @@ class ControllerMain:
         self.X = 8.5
         self.N = 100
         self.selected_methods = []
-        self.derivative = lambda x, y: y * (float(x) * y + 3.0 * x) #min(9999999.0, y * (float(x) * y + 3.0 * x))
+        self.derivative = lambda x, y: y * (float(x) * y + 3.0 * x)  # min(9999999.0, y * (float(x) * y + 3.0 * x))
 
         # Approximation and exact algorithm methods
         self.methods = {Selector.EULER: euler,
@@ -107,24 +106,19 @@ class ControllerStepError:
         else:
             self.selected_methods.remove(selector)
 
-
     def get_data(self):
         """
         :return: list of dictionaries with 'x' and 'y' lists!!!
         """
-        data = [[]] * len(self.selected_methods)
+        data = [[], [], []]
 
-        for step in range (self.n0, self.N):
+        for step in range(self.n0, self.N):
             exacts = exactGraph(x0=self.x0, X=self.X, steps=step, f=self.derivative, y0=self.y0)
             for i, sel in enumerate(self.selected_methods):
                 tmp = self.methods[sel](x0=self.x0, X=self.X, steps=step, f=self.derivative, y0=self.y0)
                 errors = errorGraph(tmp, exacts)['y']
-                # print(errors)
-                a=max(errors)
-                print(sel.name, a)
+                a = max(errors)
                 data[i].append(a)
-                print(data)
-        # print(data)
         return data
 
     def update_view(self):
@@ -133,9 +127,7 @@ class ControllerStepError:
         for i, values in enumerate(res):
             sel = self.selected_methods[i]
             x = list(range(self.n0, self.N))
-            # print(values)
             self.view.plot_stepError(x, values, self.ALG_CLR[sel], sel.name)
-
 
 
 if __name__ == "__main__":

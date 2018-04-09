@@ -155,7 +155,6 @@ class Second(QtGui.QDialog):
 
         self.resize(500, 600)
 
-
     def clear_graphs(self):
         try:
             self.stepErrorGraphWidget.clear()
@@ -163,7 +162,6 @@ class Second(QtGui.QDialog):
             self.stepErrorGraphWidget.addLegend()
         except:
             self.log("Exception accured (2)!!!\n")
-
 
     def plot_stepError(self, x, y, clr, legend):
         # print(x)
@@ -177,7 +175,6 @@ class Second(QtGui.QDialog):
         print("update (redraw)")
         self.controller.update_view()
 
-
     @QtCore.pyqtSlot()
     def on_algorithmButton_clicked(self, selector):
         try:
@@ -190,14 +187,14 @@ class Second(QtGui.QDialog):
         print("update state")
         self.controller.N = int(self.NEdit.value())
         self.controller.n0 = int(self.n0Edit.value())
-    
+
     def init_components(self):
         # Main layout (vertical)
         self.vbox = QtGui.QVBoxLayout(self)
         # Graph widget
         self.stepErrorGraphWidget = pg.PlotWidget(self, name='Step<->Error')
         self.vbox.addWidget(self.stepErrorGraphWidget)
-        #Grid for control panel
+        # Grid for control panel
         grid = QtGui.QGridLayout()
         grid.setSpacing(20)
         grid.addWidget(QtGui.QLabel('Parameters'), 0, 0, 1, 2)
@@ -213,8 +210,8 @@ class Second(QtGui.QDialog):
         self.eulerButton = QtGui.QCheckBox("Euler")
         self.improvedEulerButton = QtGui.QCheckBox("ImprovedEuler")
         self.rkButton = QtGui.QCheckBox("Runge-Kutta")
-        grid.addWidget(self.eulerButton, 3, 0, 1, 2) 
-        grid.addWidget(self.improvedEulerButton, 4, 0, 1, 2) 
+        grid.addWidget(self.eulerButton, 3, 0, 1, 2)
+        grid.addWidget(self.improvedEulerButton, 4, 0, 1, 2)
         grid.addWidget(self.rkButton, 5, 0, 1, 2)
         # Update button
         self.updateButton = QtGui.QPushButton("Update")
