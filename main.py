@@ -92,13 +92,13 @@ class MyWindow(QtGui.QWidget):
         self.hbox.addLayout(self.control_box, 0)
 
         # init views
-        self.x0Edit = QtGui.QDoubleSpinBox(minimum=-4.5, maximum=3.5, value=-1.5)
+        self.x0Edit = QtGui.QDoubleSpinBox(minimum=-4.5, maximum=3.5, value=self.controller.x0)
         self.y0Edit = QtGui.QDoubleSpinBox(minimum=-2.99, maximum=0.0,
-                                           value=-2.0)  # (minimum=-4.99, maximum=3.0, value=-2.0)
-        self.XEdit = QtGui.QDoubleSpinBox(minimum=-3.5, maximum=5.5, value=4.5)
+                                           value=self.controller.y0)  # (minimum=-4.99, maximum=3.0, value=-2.0)
+        self.XEdit = QtGui.QDoubleSpinBox(minimum=-3.5, maximum=5.5, value=self.controller.X)
         self.notificationsEdit = QtGui.QTextEdit()
         self.notificationsEdit.setEnabled(False)
-        self.NEdit = QtGui.QSpinBox(minimum=40, maximum=10000, value=100)  # TODO: write this in report
+        self.NEdit = QtGui.QSpinBox(minimum=40, maximum=10000, value=self.controller.N)  # TODO: write this in report
         # Select method(s)
         self.exactButton = QtGui.QCheckBox("Exact")
         self.eulerButton = QtGui.QCheckBox("Euler")
@@ -150,42 +150,67 @@ class Second(QtGui.QDialog):
     def __init__(self, parent=None):
         super(Second, self).__init__(parent)
         self.controller = ControllerStepError(self)
-
         self.init_components()
 
+        self.n0Edit.valueChanged.connect(self.update_state)
+        self.NEdit.valueChanged.connect(self.update_state)
+        self.eulerButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.EULER))
+        self.improvedEulerButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.IMP_EULER))
+        self.rkButton.clicked.connect(lambda: self.on_algorithmButton_clicked(selector=Selector.RUNGE_KUTTA))
+        self.updateButton.clicked.connect(self.on_updateButton_clicked)
+
         self.resize(500, 600)
+
+
+    @QtCore.pyqtSlot()
+    def on_updateButton_clicked(self):
+        print("update (redraw)")
+
+
+    @QtCore.pyqtSlot()
+    def on_algorithmButton_clicked(self, selector):
+        try:
+            print("Update selector")
+            self.controller.switch_selector(selector)
+        except:
+            self.log("Exception accured (1)!\n")
+
+    def update_state(self):
+        print("update state")
+        self.controller.N = int(self.NEdit.value())
+        self.controller.n0 = int(self.n0Edit.value())
     
     def init_components(self):
         # Main layout (vertical)
         self.vbox = QtGui.QVBoxLayout(self)
-
+        # Graph widget
         self.stepErrorGraphWidget = pg.PlotWidget(self, name='Step<->Error')
         self.vbox.addWidget(self.stepErrorGraphWidget)
-
+        #Grid for control panel
         grid = QtGui.QGridLayout()
         grid.setSpacing(20)
-
         grid.addWidget(QtGui.QLabel('Parameters'), 0, 0, 1, 2)
-
+        # n0
         grid.addWidget(QtGui.QLabel('n0'), 1, 0)
-        self.n0Edit = QtGui.QSpinBox(minimum=40, maximum=960, value=40)
+        self.n0Edit = QtGui.QSpinBox(minimum=40, maximum=960, value=self.controller.n0)
         grid.addWidget(self.n0Edit, 1, 1)
-
+        # N 
         grid.addWidget(QtGui.QLabel('N'), 2, 0)
-        self.NEdit = QtGui.QSpinBox(minimum=100, maximum=1000, value=100)
+        self.NEdit = QtGui.QSpinBox(minimum=100, maximum=1000, value=self.controller.N)
         grid.addWidget(self.NEdit, 2, 1)
-
+        # Algorithm checkbox
         self.eulerButton = QtGui.QCheckBox("Euler")
         self.improvedEulerButton = QtGui.QCheckBox("ImprovedEuler")
         self.rkButton = QtGui.QCheckBox("Runge-Kutta")
         grid.addWidget(self.eulerButton, 3, 0, 1, 2) 
         grid.addWidget(self.improvedEulerButton, 4, 0, 1, 2) 
-        grid.addWidget(self.rkButton, 5, 0, 1, 2) 
-        
-        self.vbox.addLayout(grid)
-        
+        grid.addWidget(self.rkButton, 5, 0, 1, 2)
+        # Update button
         self.updateButton = QtGui.QPushButton("Update")
-        self.vbox.addWidget(self.updateButton)
+        grid.addWidget(self.updateButton, 6, 0, 1, 2)
+        self.vbox.addLayout(grid)
+
+
         
 
 if __name__ == "__main__":

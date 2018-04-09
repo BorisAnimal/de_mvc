@@ -24,7 +24,7 @@ class ControllerMain:
         self.X = 8.5
         self.N = 100
         self.selected_methods = []
-        self.derivative = lambda x, y: min(9999999.0, y * (float(x) * y + 3.0 * x))
+        self.derivative = lambda x, y: y * (float(x) * y + 3.0 * x) #min(9999999.0, y * (float(x) * y + 3.0 * x))
 
         # Approximation and exact algorithm methods
         self.methods = {Selector.EULER: euler,
@@ -88,6 +88,15 @@ class ControllerStepError:
     # Keeps state and input information of system
     def __init__(self, view):
         self.view = view
+        self.n0 = 40
+        self.N = 100
+        self.selected_methods = []
+
+    def switch_selector(self, selector):
+        if selector not in self.selected_methods:
+            self.selected_methods.append(selector)
+        else:
+            self.selected_methods.remove(selector)
 
 
 
