@@ -6,8 +6,11 @@ import numpy as np
 # Variant 12:
 # f(x, y) = dy/dx = x*y^2 + 3 * x * y
 
-def __exactY(X, c):
-    x = float(X)
+def __exactY(x, c):
+    """
+        x: current x value
+        c: precalculated c value equal to c = y0 / (pow(e, 1.5 * x0 * x0) * (3 + y0))
+    """
     tmp = pow(e, 1.5 * x * x)
     return 3 * c * tmp / (1 - c * tmp)
 

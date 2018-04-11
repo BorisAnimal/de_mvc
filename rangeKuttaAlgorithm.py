@@ -3,13 +3,21 @@ import matplotlib.pyplot as plt
 
 
 def rk(x0, X, steps, f=None, y0=None):
+    """
+        Calculates the runge_kutt algorithm for given values
+        :param x0: initial x
+        :param y0: initial y
+        :param f: derivative function
+        :param X: right boreder of x axis
+        :param stepы: number of steps in approximation
+        :return: dictionary with values 'x': [list of x axis values], 'y': [list of y axis values]
+    """
     y = y0
     h = (X - x0) / float(steps)
+    hh = h / 2  # half of h
 
     x = np.linspace(x0, X, steps)
     values = {'x': x, 'y': [y0]}
-
-    hh = h / 2  # half of h
     for i in x[1:]:
         try:
             k1 = f(i, y)

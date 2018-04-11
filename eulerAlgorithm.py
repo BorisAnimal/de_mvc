@@ -27,12 +27,24 @@ def __basic(f, y0, x0, X, steps, alg):
 
 
 def __imp_eul_lambda(f, x, y, h):
+    """
+        f: derivative function
+        x: x_i
+        y: y_i
+        h: step. approximated dx in fact
+        retrun: approximation of x_(i+1)
+    """
     return y + (f(x, y) + f(x + h, y + h * f(x, y))) / 2 * h
 
 
 def __eul_lambda(f, x, y, h):
-    # print("f: {}\t\tx: {}\t\ty: {}\t\th: {}".format(f(x, y), x, y, h))
-    # print(str(f(x, y)), x, y)
+    """
+        f: derivative function
+        x: x_i
+        y: y_i
+        h: step. approximated dx in fact
+        retrun: approximation of x_(i+1)
+    """
     return y + f(x, y) * h
 
 

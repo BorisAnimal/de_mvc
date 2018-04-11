@@ -131,6 +131,9 @@ class MyWindow(QtGui.QWidget):
     def plot_error(self, x, y, clr, legend):
         self.errorGraphWidget.plot(x, y, pen=clr, name=legend)
 
+    
+
+
     def clear_graphs(self):
         try:
             self.solutionGraphWidget.clear()
