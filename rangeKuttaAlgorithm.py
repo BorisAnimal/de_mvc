@@ -9,7 +9,7 @@ def rk(x0, X, steps, f=None, y0=None):
         :param y0: initial y
         :param f: derivative function
         :param X: right boreder of x axis
-        :param stepы: number of steps in approximation
+        :param steps: number of steps in approximation
         :return: dictionary with values 'x': [list of x axis values], 'y': [list of y axis values]
     """
     y = y0
