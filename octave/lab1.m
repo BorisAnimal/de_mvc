@@ -9,8 +9,8 @@ function ydot = f(y,x)
 endfunction
 
 function y = euler(y0, x) 
-  y = [y0]
-  step = x(2) - x(1)
+  y = [y0];
+  step = x(2) - x(1);
   for i = 2:length(x)
     yi = y(i-1) + step * f(y(i-1), x(i-1));
     y = [y, yi];
@@ -32,33 +32,43 @@ function y = runge_kutt(y0,x)
 endfunction
 
 function y = exact(y0, x)
-  y = [y0]
+  y = [y0];
   for i = 2:length(x)
-    tmp = 7*x(i)**2 -13*x(i) + 111 - 110 * e()**(-x(i))
-    y = [y, tmp]
+    tmp = 7*x(i)**2 -13*x(i) + 111 - 110 * e()**(-x(i));
+    y = [y, tmp];
   endfor
 endfunction
 
 function err = mean_error(y1, y2)
-  s = 0
+  s = 0;
   for i = 1:length(y1)
-    s += abs(y1(i) - y2(i))
+    s += abs(y1(i) - y2(i));
   endfor
-  err = s / length(y1)
+  err = s / length(y1);
 endfunction
 
 function err = abs_error(y1, y2)
-  err = [abs(y1(1) - y2(1))]
+  err = [abs(y1(1) - y2(1))];
   for i = 2: length(y1)
-    err = [err, abs(y1(i) - y2(i))]
+    err = [err, abs(y1(i) - y2(i))];
+  endfor
+endfunction
+
+function err = max_error(y1, y2)
+  err = abs(y1(1) - y2(1));
+  for i = 2:length(y1)
+    tmp = abs(y1(i) - y2(i));
+    if tmp > err
+      err = tmp;
+    endif
   endfor
 endfunction
 
 x0 = 0;
 xn = 4;
-steps = 100
+steps = 100;
 
-y0 = 1
+y0 = 1;
 
 x = linspace(x0,xn, steps);
 y = lsode("f", y0, x);
@@ -81,4 +91,20 @@ figure(2);
 hold on;
 
 # plot error distribution 
-plot(x, abs_error(y, y_ex),  '-g;Abs error for Euler;', 'linewidth', 2)
+plot(x, abs_error(y, y_ex),  '-g;Abs error for Euler;', 'linewidth', 2);
+title ("error of Euler method");
+
+errors = [];
+# Dependency of steps and max error
+for i = 10:100
+  x = linspace(x0,xn, i);
+  y = exact(y0,x);
+  y_eu = euler(y0,x);
+  errors = [errors, max_error(y,y_eu)];
+endfor
+
+figure(3);
+hold on;
+
+plot(linspace(10,100,91),errors,'-g;max error;', 'linewidth', 2);
+title ("Dependency of steps and max error");
